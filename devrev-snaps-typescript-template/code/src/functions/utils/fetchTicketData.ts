@@ -1,4 +1,4 @@
-import { client } from '@devrev/typescript-sdk';
+
 
 interface TicketData {
   title: string;
@@ -18,6 +18,11 @@ export async function fetchTicketData(devrevSDK: any, workID: string): Promise<{
 
     // Get the first tag ID if available
     const tagID = ticketData.tags[0]?.id;
+
+
+
+
+
 
     return { ticketData, tagID };
   } catch (error) {

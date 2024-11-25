@@ -8,11 +8,8 @@ import {client } from "@devrev/typescript-sdk";
 
 export async function updateTicket(
   devrevSDK: any, //check this. u can change this to any
-  tagType: any,
-  context: string|null,
   partID: string|null,
   workID: string,
-  workType:string,
   tagID: string|undefined
 ): Promise<any> {
   try {
@@ -21,11 +18,13 @@ export async function updateTicket(
     //   value: tagType
     // };
 
+    
+
     const updatedInfo = {
       id: workID,
-      type: workType,
+      type: "ticket",
       applies_to_part: partID,
-      // tags: [newTag], // Tags should be an array
+      tags:{"set":[{"id":tagID}]}, // Tags should be an set
     
     };
 

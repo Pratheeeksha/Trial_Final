@@ -14,12 +14,12 @@ service_account:
 # Add organization level inputs, reference: https://docs.devrev.ai/snap-ins/references/inputs.
 inputs:
   organization:
-    - name: sample_value
-      description: Sample input value.
+    - name: api
+      description: to store open api
       field_type: text
-      default_value: "primary"
+      default_value: ""
       ui:
-        display_name: Sample Value
+        display_name: API_KEY
 
 # Event source reference: https://docs.devrev.ai/snap-ins/references/event_sources#supported-event-source-types-and-their-event-types.
 event_sources:
@@ -44,3 +44,14 @@ automations:
     event_types:
       - work_created
     function: ticket_tagger
+
+
+tags:
+  - name: bug
+    description: tag related to bug  
+  - name: question
+    description: tag related to question
+  - name: feature_request
+    description: tag related to feature request  
+  - name: complaint
+    description: tag related to complaint        

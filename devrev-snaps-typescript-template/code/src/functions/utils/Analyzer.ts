@@ -4,23 +4,30 @@ import OpenAI from "openai";
 import { partAssigner } from "./Assigner";
 
 import dotenv from 'dotenv';
+import { Api } from "@devrev/typescript-sdk/dist/auto-generated/beta/beta-devrev-sdk";
 dotenv.config();
 
 
-const openai = new OpenAI({
-    apiKey: process.env['OPENAI_API_KEY'],
-});
 
 
 
 
 
 // Function to analyze a ticket
-const analyzeTicket = async (ticketContent: string) => {
+const analyzeTicket = async (ticketContent: string,apiKey:string) => {
     try {
+
+        const openai = new OpenAI({
+            apiKey: apiKey
+
+        });
+        
+
+        
+
         const prompt = `
         Analyze the following ticket and provide the following details:
-        1. Intent: (Bug Report, Feature Request, Complaint, or Question)
+        1. Intent: (bug, feature_request, complaint, question)
         2. Priority: (High, Medium, Low)
         3. Key Entities: (Extract important entities like product names, keywords, etc.)
         4. Suggested Tags: (Provide 2-3 tags based on the ticket content)
@@ -74,13 +81,16 @@ const analyzeTicket = async (ticketContent: string) => {
 };
 
 // Exported analyzer function
-export async function analyzer(TicketData:any, devrevSDK: any) {
+export async function analyzer(TicketData:any, devrevSDK:Api<object>,apiKey:string) {
     // Generate the context based on the ticket data
-    const context =` ${TicketData.title} is the title of the ticket generated having its description to be ${TicketData.body}`;
+    const context =` ${TicketData.title} ${TicketData.body}`;
 
     try {
         // Analyze the ticket to get intent and reasoning
-        const { intent, reasoning } = await analyzeTicket(context);
+
+        
+
+        const { intent, reasoning } = await analyzeTicket(context,apiKey);
 
         // Assign a part using the partAssigner function
         const partID = await partAssigner(context, TicketData, devrevSDK);
