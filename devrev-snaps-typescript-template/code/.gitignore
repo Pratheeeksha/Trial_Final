@@ -37,3 +37,7 @@ before-run-data.json
 
 # packaged app
 *.tar.gz
+
+
+
+.env
