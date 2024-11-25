@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@devrev/typescript-sdk": "^1.1.34",
+    "@types/node": "^22.9.3",
+    "dotenv": "^16.4.5",
+    "openai": "^4.73.0"
+  }
+}
