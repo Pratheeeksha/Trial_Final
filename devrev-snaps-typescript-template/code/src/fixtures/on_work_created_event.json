@@ -114,7 +114,7 @@
       "input_data": {
         "global_values":{
          
-        "api":"trial"
+        "api":""
         },
         "keyrings": {
           "devrev": "TEST-TOKEN"
