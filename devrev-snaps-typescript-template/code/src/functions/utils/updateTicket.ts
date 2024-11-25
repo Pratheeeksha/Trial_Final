@@ -1,29 +1,127 @@
-import { WorkType } from "@devrev/typescript-sdk/dist/auto-generated/public-devrev-sdk"
+import {client } from "@devrev/typescript-sdk";
 
-//code on how to update the already created ticket using devrevsdk 
-updateTicket(devrevSDK:any,tagType:String[],context:String,partID:String,workID:String,WorkType:String, tagID:String){
+// interface UpdateTicketResponse {
+//   success: boolean;
+//   message: string;
+//   updatedWork?: any; // Replace 'any' with a more specific type if available
+// }
 
-const newTag={
-    id:tagID,
-    value:tagType
+export async function updateTicket(
+  devrevSDK: any, //check this. u can change this to any
+  tagType: any,
+  context: string|null,
+  partID: string|null,
+  workID: string,
+  workType:string,
+  tagID: string|undefined
+): Promise<any> {
+  try {
+    // const newTag = {
+    //   id: tagID,
+    //   value: tagType
+    // };
+
+    const updatedInfo = {
+      id: workID,
+      type: workType,
+      applies_to_part: partID,
+      // tags: [newTag], // Tags should be an array
+    
+    };
+
+    const response = await devrevSDK.worksUpdate(updatedInfo);
+
+    return { response
+      // success: true,
+      // message: "Ticket updated successfully",
+      // updatedWork: response
+    };
+  } catch (error) {
+    console.error('Error updating ticket:', error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'An unknown error occurred'
+    };
+  }
 }
 
 
-const updatedInfo={
-id:workID,
-type:WorkType,
-applies_to_part:partID,
-tags:  newTag                    // check how to show the tags
-//how to show the reasoning 
 
-}
 
-const response = await devrevSDK.works.update(updatedInfo);
 
-    //works.update
-    return response;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { WorkType } from "@devrev/typescript-sdk/dist/auto-generated/public-devrev-sdk"
+
+// //code on how to update the already created ticket using devrevsdk 
+// updateTicket(devrevSDK:any,tagType:String[],context:String,partID:String,workID:String,WorkType:String, tagID:String){
+
+// const newTag={
+//     id:tagID,
+//     value:tagType
+// }
+
+
+// const updatedInfo={
+// id:workID,
+// type:WorkType,
+// applies_to_part:partID,
+// tags:  newTag                    // check how to show the tags
+// //how to show the reasoning 
+
+// }
+
+// const response = await devrevSDK.works.update(updatedInfo);
+
+//     //works.update
+//     return response;
     
 
 
-    // maybe a function that will create the comment and put in discussion 
-}
+// }

@@ -1,4 +1,4 @@
-import { run } from '../functions/on_work_creation';
+import { run } from '../functions/ticket_tagger';
 
 describe('Test some function', () => {
   it('Something', () => {
