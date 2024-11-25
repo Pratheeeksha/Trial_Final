@@ -114,7 +114,8 @@
       },
       "input_data": {
         "global_values":{
-          "api":"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"
+         
+        "api":"trial"
         },
         "keyrings": {
           "devrev": "TEST-TOKEN"
