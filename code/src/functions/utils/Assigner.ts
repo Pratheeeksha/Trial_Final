@@ -1,37 +1,54 @@
+import { betaSDK } from "@devrev/typescript-sdk";
+import { Api, SearchHybridNamespace } from "@devrev/typescript-sdk/dist/auto-generated/beta/beta-devrev-sdk";
+import { Namespace } from "protobufjs";
 
 
-// Function to extract part_id
-function extractPartId(jsonResponse: any): string | null {
-    // Check if results exist and is an array
-    if (jsonResponse.results && Array.isArray(jsonResponse.results) && jsonResponse.results.length > 0) {
-        const part = jsonResponse.results[0].part; // Access the first result's part
-        if (part && part.id) {
-            return part.id; // Return the part ID
-        }
-    }
-    return null; // Return null if not found
+
+
+
+function cleanAndSliceString(inputString: string, maxLength: number = 400): string {
+    // Remove special characters using a regular expression
+    const cleanedString = inputString.replace(/[^A-Za-z0-9\s]/g, '');
+    
+    // Slice the string to the specified maximum length
+    const slicedString = cleanedString.slice(0, maxLength);
+    
+    return slicedString;
 }
+
+
+
+
+
+
+
 
 // Define the partAssigner function
 export async function partAssigner(
     context: string, 
     TicketData: string, 
-    devrevSDK: any
+    devrevSDK:any
 ): Promise<string | null> {
     // Define the search payload
+
+    const result = cleanAndSliceString(context);
+    console.log(result);
+
+
+
     const searchPayload = {
-        namespace: "part",
-        query: context,
+        namespace: SearchHybridNamespace.Part,
+        query: result,
         limit: 1,
-        semantic_weight: 1.0
+        semantic_weight: 0.7
     };
 
     try {
         // Make the search request using the devrevSDK
-        const response = await devrevSDK.searchHybrid(searchPayload);
+        const response= await devrevSDK.searchHybrid(searchPayload);
 
         // Extract the part ID from the response
-        const partId = extractPartId(response);
+        const partId = response.data.results[0].part.id
 
         console.log('Extracted Part ID:', partId);
 

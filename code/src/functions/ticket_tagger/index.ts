@@ -2,7 +2,7 @@
 import { client } from '@devrev/typescript-sdk';
 import { analyzer } from "../utils/Analyzer";
 import { updateTicket } from "../utils/updateTicket";
-import { fetchTicketData } from "../utils/fetchTicketData";
+
 
 interface EventContext {
   secrets: {
@@ -35,7 +35,7 @@ export async function handleEvent(event: any): Promise<any> {
     const devrevPAT= event.context.secrets.service_account_token;
     const API_BASE= event.execution_metadata.devrev_endpoint;
 
-    const devrevSDK = client.setup({
+    const devrevSDK = client.setupBeta({
       endpoint: API_BASE,
       token: devrevPAT,
     });
@@ -43,15 +43,42 @@ export async function handleEvent(event: any): Promise<any> {
     const workCreated = event.payload.work_created.work;
     const workID = workCreated.id;
     const workType = workCreated.type;
-     
-    const {ticketData, tagID } = await fetchTicketData(devrevSDK, workID);
+     const title =workCreated.title;
+     const desp = workCreated.body;
+   const apiKey= event.input_data.global_values.api;
 
-    const { reasoning, tagType, context, partID } = await analyzer(ticketData,devrevSDK);
+   
 
-    const { response } = await updateTicket(devrevSDK, tagType, context, partID, workID, workType, tagID);
+  
+    
+      console.log("title:",title);
+      
+      console.log("worktype",workType);
+      console.log("descrip:",desp);
+    
+
+    const {  tagType, partID,analysis } = await analyzer(workCreated,devrevSDK,apiKey);
+
+ console.log("tag TYPE",tagType);
+
+    if(tagType){
+
+    const tag_name = await devrevSDK.tagsList({ name: [tagType] });
+    const tag = tag_name.data.tags[0].id;
+    
+
+
+    console.log("new tag name",tag_name)
+   console.log("new tag id",tag)
+
+
+
+    const { response } = await updateTicket(devrevSDK,partID, workID, tag);
     console.log("updated ticket :",response);
-
-    const bodyComment = `Hello, the ticket is updated and Tagged approapriately! \n Here is the short context of the ticket \n !${context} \n and the reason for its tagging \n Reason: ${reasoning}`;
+    console.log("part thingy",response.data.work.applies_to_part);
+    console.log("tags thingy",response.data.work.tags);
+    const bodyComment = "Hello, the ticket is updated and tagged appropriately!\nHere is the short context of the ticket:\n" + analysis;
+     console.log(bodyComment);
 
     const commentBody = {
       object: workCreated.id,
@@ -62,6 +89,7 @@ export async function handleEvent(event: any): Promise<any> {
     const comment = await devrevSDK.timelineEntriesCreate(commentBody as any);
   
     return comment;
+  }
   } catch (error) {
     console.error('Error handling DevRev event:', error);
     throw error;
@@ -70,8 +98,13 @@ export async function handleEvent(event: any): Promise<any> {
 
 export const run = async (events: any[]): Promise<void> => {
   try {
+           
+    console.info("events", JSON.stringify(events));
+
+
     for (let event of events) {
       await handleEvent(event);
+      console.log("done execution with commenting")
     }
   } catch (error) {
     console.error('Error processing events:', error);
