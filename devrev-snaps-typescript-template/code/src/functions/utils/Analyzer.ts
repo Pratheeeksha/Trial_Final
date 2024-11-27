@@ -56,7 +56,7 @@ const analyzeTicket = async (ticketContent: string,apiKey:string) => {
         if (analysis) {
             const lines = analysis.split("\n").filter((line) => line.trim() !== "");
 
-            const intent = lines.find((line) => line.startsWith("1. Intent:"))?.replace("1. Intent:", "").trim();
+            const intent = lines.find((line) => line.startsWith("1. Intent:"))?.replace("1. Intent:", "").trim().toLowerCase();;
             const priority = lines.find((line) => line.startsWith("2. Priority:"))?.replace("2. Priority:", "").trim();
             const keyEntities = lines.find((line) => line.startsWith("3. Key Entities:"))?.replace("3. Key Entities:", "").trim();
             const suggestedTags = lines.find((line) => line.startsWith("4. Suggested Tags:"))?.replace("4. Suggested Tags:", "").trim();
@@ -69,7 +69,7 @@ const analyzeTicket = async (ticketContent: string,apiKey:string) => {
             console.log("Suggested Tags:", suggestedTags);
             console.log("Reasoning:", reasoning);
 
-            return { intent, reasoning };
+            return { intent, reasoning,analysis };
         } else {
             console.error("No analysis content found in the response.");
             return { intent: null, reasoning: null };
@@ -90,13 +90,13 @@ export async function analyzer(TicketData:any, devrevSDK:Api<object>,apiKey:stri
 
         
 
-        const { intent, reasoning } = await analyzeTicket(context,apiKey);
+        const { intent, reasoning,analysis } = await analyzeTicket(context,apiKey);
 
         // Assign a part using the partAssigner function
         const partID = await partAssigner(context, TicketData, devrevSDK);
-
+         console.log("updated partID", partID)
         // Return the updated data
-        return { reasoning, tagType: intent, context, partID };
+        return {  tagType: intent,  partID,analysis};
     } catch (error) {
         console.error("Error in analyzer function:", error);
         return { reasoning:null, tagType:null, context:null, partID:null };
