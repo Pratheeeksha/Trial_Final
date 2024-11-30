@@ -20,6 +20,42 @@ inputs:
       default_value: ""
       ui:
         display_name: API_KEY
+    - name: tag_picker
+      description: "select tags"
+      field_type: id
+      id_type:
+        - tag
+      is_required: false
+      ui:
+        display_name: Tag Name
+    - name: part_picker
+      description: "select part"
+      field_type: id
+      id_type:
+        - product
+        - capability
+        - feature
+        - enhancement
+      is_required: false
+      ui:
+        display_name: Part Name       
+    - name: slack_token
+      description: "Slack Bot User OAuth Token"
+      field_type: text
+      default_value: ""
+      is_required: true
+      ui:
+        display_name: Slack token
+    - name: channel_id
+      description: Slack channel id 
+      field_type: text
+      default_value: ""
+      is_required: true
+      ui:
+        display_name: Channel id
+
+
+
 
 # Event source reference: https://docs.devrev.ai/snap-ins/references/event_sources#supported-event-source-types-and-their-event-types.
 event_sources:
@@ -36,6 +72,9 @@ event_sources:
 functions:
   - name: ticket_tagger
     description: function to trigger on ticket creation
+  - name: override_tagger
+    description: function to trigger on override_tagger
+  
 
 # Automations reference: https://docs.devrev.ai/snap-ins/concepts#automation.
 automations:
@@ -55,3 +94,19 @@ tags:
     description: tag related to feature request  
   - name: complaint
     description: tag related to complaint        
+
+
+
+
+commands:
+  - name: override_ticket
+    namespace: devrev
+    description: Command to trigger function to override a ticket 
+    surfaces:
+      - surface: discussions
+        object_types:
+          - ticket
+    usage_hint: "Command to overide this ticket"
+    function: override_tagger
+
+

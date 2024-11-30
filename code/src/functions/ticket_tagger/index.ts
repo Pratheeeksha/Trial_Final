@@ -2,7 +2,7 @@
 import { client } from '@devrev/typescript-sdk';
 import { analyzer } from "../utils/Analyzer";
 import { updateTicket } from "../utils/updateTicket";
-
+import {sendSlackMessage} from "../utils/Assigner"
 
 interface EventContext {
   secrets: {
@@ -46,6 +46,8 @@ export async function handleEvent(event: any): Promise<any> {
      const title =workCreated.title;
      const desp = workCreated.body;
    const apiKey= event.input_data.global_values.api;
+   const slackToken =event.input_data.global_values.slack_token;
+   const channelId = event.input_data.global_values.channel_id;
 
    
 
@@ -57,9 +59,9 @@ export async function handleEvent(event: any): Promise<any> {
       console.log("descrip:",desp);
     
 
-    const {  tagType, partID,analysis } = await analyzer(workCreated,devrevSDK,apiKey);
+  const {  tagType, partID,analysis } = await analyzer(workCreated,devrevSDK,apiKey);
 
- console.log("tag TYPE",tagType);
+   console.log("tag TYPE",tagType);
 
     if(tagType){
 
@@ -87,7 +89,7 @@ export async function handleEvent(event: any): Promise<any> {
     };
 
     const comment = await devrevSDK.timelineEntriesCreate(commentBody as any);
-  
+    await sendSlackMessage(slackToken,channelId,analysis);
     return comment;
   }
   } catch (error) {
@@ -95,6 +97,23 @@ export async function handleEvent(event: any): Promise<any> {
     throw error;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const run = async (events: any[]): Promise<void> => {
   try {

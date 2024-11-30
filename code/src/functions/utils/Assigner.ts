@@ -1,6 +1,7 @@
 import { betaSDK } from "@devrev/typescript-sdk";
 import { Api, SearchHybridNamespace } from "@devrev/typescript-sdk/dist/auto-generated/beta/beta-devrev-sdk";
 import { Namespace } from "protobufjs";
+import { WebClient } from '@slack/web-api';
 
 
 
@@ -62,7 +63,32 @@ export async function partAssigner(
 
 
 
+export async function sendSlackMessage(slackToken: string, channelId: string,analysis:any): Promise<void> {
 
+    if (!slackToken || !channelId) {
+      console.error('Slack token or channel ID is missing.');
+      return;
+    }
+  
+    try {
+      const slackClient = new WebClient(slackToken);
+
+      const slackResponse = await slackClient.chat.postMessage({
+        channel: channelId,
+        text: analysis,
+      })
+   
+
+
+
+      
+      console.log('Slack message sent successfully:', slackResponse);
+    } catch (error: any) {
+      console.error('Error while sending Slack message:', error.message);
+    }
+  }
+  
+  
 
 
 
